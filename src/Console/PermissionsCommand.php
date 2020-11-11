@@ -2,6 +2,7 @@
 
 namespace Backpack\PermissionManager\Console;
 
+use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Route;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -29,7 +30,7 @@ class PermissionsCommand extends Command
 
             // Groups routes by controller
             ->groupBy(function ($route) {
-                list($controller) = explode('@', array_get($route->getAction(), 'controller'));
+                list($controller) = explode('@', Arr::get($route->getAction(), 'controller'));
 
                 return $controller;
             })
