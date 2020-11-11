@@ -11,6 +11,8 @@ class BasePermissionCrudController extends CrudController
         if ($this->crud) {
             return;
         }
+        $this->crud = app()->make('crud');
+
         $this->crud->controller = $this;
         // ---------------------------
         // Create the CrudPanel object
