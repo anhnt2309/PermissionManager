@@ -1,11 +1,11 @@
 <?php
 
-namespace Backpack\CRUD\PanelTraits;
+namespace Backpack\PermissionManager\PanelTraits;
 
+use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 trait Permissions
@@ -24,7 +24,7 @@ trait Permissions
     public function initPermissions()
     {
         // Checks if the PermissionManagerServiceProvider exists
-        if (! class_exists('Backpack\PermissionManager\PermissionManagerServiceProvider')) {
+        if (!class_exists('Backpack\PermissionManager\PermissionManagerServiceProvider')) {
             return false;
         }
 
@@ -36,7 +36,7 @@ trait Permissions
         // Gives the current's CRUD permissions to the currently connected user
         if (config('backpack.permissionmanager.give_permissions_to_current_user_while_browsing', false)) {
             $user = Auth::user();
-            if (! empty($user)) {
+            if (!empty($user)) {
                 $this->givePermissionsToUser($user);
             }
         }
@@ -59,7 +59,7 @@ trait Permissions
         // Assigns all permissions to user
         $this->getPermissions()->each(function ($permission, $key) use ($user) {
             try {
-                if (! $user->hasPermissionTo($permission)) {
+                if (!$user->hasPermissionTo($permission)) {
                     $user->givePermissionTo($permission);
                 }
             } catch (PermissionDoesNotExist $e) {
@@ -87,7 +87,7 @@ trait Permissions
      */
     public function getPermissionPrefix()
     {
-        if (! is_null($this->permissionsPrefix)) {
+        if (!is_null($this->permissionsPrefix)) {
             $prefix = $this->permissionsPrefix;
         } else {
             $prefix = $this->getDefaultPermissionPrefix();
@@ -104,10 +104,10 @@ trait Permissions
      */
     public function getDefaultPermissionPrefix($cached = true)
     {
-        if (is_null($this->defaultPermissionPrefix) || ! $cached) {
+        if (is_null($this->defaultPermissionPrefix) || !$cached) {
             $this->defaultPermissionPrefix = '';
 
-            if (! empty($this->controller)) {
+            if (!empty($this->controller)) {
 
                 // Splits the controller's namespace and extracts the class name
                 $namespaceParts = collect(explode('\\', trim(get_class($this->controller), '\\')));
@@ -169,8 +169,8 @@ trait Permissions
 
         // Adds the prefix
         $prefix = $this->getPermissionPrefix();
-        if (! empty($prefix)) {
-            $permission = $prefix.'::'.$permission;
+        if (!empty($prefix)) {
+            $permission = $prefix . '::' . $permission;
         }
 
         return $permission;
@@ -186,7 +186,7 @@ trait Permissions
         $prefix = $this->getPermissionPrefix();
 
         // Gets the existing permissions
-        $databasePermissions = \Backpack\PermissionManager\app\Models\Permission::where('name', 'like', $prefix.'::%')
+        $databasePermissions = \Backpack\PermissionManager\app\Models\Permission::where('name', 'like', $prefix . '::%')
             ->get(['name'])
             ->pluck('name');
 
@@ -221,7 +221,7 @@ trait Permissions
     {
         // Add missing permissions to DB
         $datas = $permissions->map(function ($permissionName, $key) {
-            return ['name' => $permissionName, 'created_at' => Carbon::now()];
+            return ['guard_name' => config('backpack.base.guard', config('auth.defaults.guard')), 'name' => $permissionName, 'created_at' => Carbon::now()];
         });
 
         $inserted = \Backpack\PermissionManager\app\Models\Permission::insert($datas->toArray());
@@ -249,7 +249,7 @@ trait Permissions
         // Denies access for each permission that the user has not
         $permissions->each(function ($permission, $key) use ($user) {
             try {
-                if (! $user->hasPermissionTo($permission)) {
+                if (!$user->hasPermissionTo($permission)) {
                     $this->denyAccess($this->extractPermissionKey($permission));
                 }
             } catch (PermissionDoesNotExist $e) {
