@@ -29,12 +29,12 @@ trait Permissions
         }
 
         // Creates the permissions that doesn't already exists
-        if (config('backpack.crud.create_permissions_while_browsing', false)) {
+        if (config('backpack.permissionmanager.create_permissions_while_browsing', false)) {
             $this->createMissingPermissions();
         }
 
         // Gives the current's CRUD permissions to the currently connected user
-        if (config('backpack.crud.give_permissions_to_current_user_while_browsing', false)) {
+        if (config('backpack.permissionmanager.give_permissions_to_current_user_while_browsing', false)) {
             $user = Auth::user();
             if (! empty($user)) {
                 $this->givePermissionsToUser($user);
@@ -42,7 +42,7 @@ trait Permissions
         }
 
         // Applies permissions on the CRUD (denies/allows access from user permissions)
-        if (config('backpack.crud.apply_permissions', false)) {
+        if (config('backpack.permissionmanager.apply_permissions', false)) {
             $this->initCrudAccessFromUserPermissions();
         }
 
@@ -127,7 +127,7 @@ trait Permissions
                 }
 
                 // Removes excluded words from namespace and class name
-                $excludedWords = config('backpack.crud.excluded_words_from_default_permission_prefix', []);
+                $excludedWords = config('backpack.permissionmanager.excluded_words_from_default_permission_prefix', []);
                 $namespaceParts = $namespaceParts->diff($excludedWords);
                 $className = collect(explode('_', snake_case($className)))->diff($excludedWords)->implode('.');
 
