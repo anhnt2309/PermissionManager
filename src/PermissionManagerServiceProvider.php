@@ -2,10 +2,11 @@
 
 namespace Backpack\PermissionManager;
 
+use Backpack\PermissionManager\app\Library\CrudPanel\PermissionCrudPanel;
+use Backpack\PermissionManager\Console\PermissionsCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use Backpack\PermissionManager\Console\PermissionsCommand;
 
 class PermissionManagerServiceProvider extends ServiceProvider
 {
@@ -47,6 +48,10 @@ class PermissionManagerServiceProvider extends ServiceProvider
 
         // publish migration from Backpack 4.0 to Backpack 4.1
         $this->publishes([__DIR__ . '/database/migrations' => database_path('migrations')], 'migrations');
+
+        $this->app->extend('crud', function () {
+            return new PermissionCrudPanel;
+        });
     }
 
     /**

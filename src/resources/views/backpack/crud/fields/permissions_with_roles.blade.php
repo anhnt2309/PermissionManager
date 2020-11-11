@@ -1,11 +1,11 @@
 <!-- permissions and roles -->
-<div class="col-md-12 checklist_dependency"  data-entity ="{{ $field['field_unique_name'] }}" @include('crud::inc.field_wrapper_attributes')>
+<div class="col-md-12 checklist_dependency"  data-entity ="{{ $field['field_unique_name'] }}" >
 
     @if (!empty($field['label']))
         <label>{!! $field['label'] !!}</label>
     @endif
 
-    @include('crud::inc.field_translatable_icon')
+    {{-- @include('crud::inc.field_translatable_icon') --}}
 
     <?php
     // Sanitizes the field value
@@ -77,7 +77,7 @@
             @endif
         </div>
 
-        <?php $roleColumns = array_get($fieldRole, 'columns') ?>
+        <?php $roleColumns = Arr::get($fieldRole, 'columns') ?>
 
         @if (is_bool($roleColumns))
             <div class="col-sm-12">
@@ -171,7 +171,7 @@
                     <div class="col-sm-{{ $permissionWithPrefixExists ? 7 : 12 }}">
                         @foreach ($permissions as $permission)
                             <?php
-                            $value = array_get($field, 'value');
+                            $value = Arr::get($field, 'value');
                             $hasPermissionViaUser = ($value[1]->pluck('id')->contains($permission->id)) || (old($fieldPermission['name']) && in_array($permission->id, old($fieldPermission['name'])));
                             $hasPermissionViaRole = $entityRolesPermissions->contains($permission->id);
                             ?>

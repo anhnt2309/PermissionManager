@@ -6,6 +6,7 @@ use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 trait Permissions
@@ -35,7 +36,7 @@ trait Permissions
 
         // Gives the current's CRUD permissions to the currently connected user
         if (config('backpack.permissionmanager.give_permissions_to_current_user_while_browsing', false)) {
-            $user = Auth::user();
+            $user = backpack_user();
             if (!empty($user)) {
                 $this->givePermissionsToUser($user);
             }
@@ -59,7 +60,7 @@ trait Permissions
         // Assigns all permissions to user
         $this->getPermissions()->each(function ($permission, $key) use ($user) {
             try {
-                if (!$user->hasPermissionTo($permission)) {
+                if (!$user->can($permission)) {
                     $user->givePermissionTo($permission);
                 }
             } catch (PermissionDoesNotExist $e) {
@@ -129,7 +130,7 @@ trait Permissions
                 // Removes excluded words from namespace and class name
                 $excludedWords = config('backpack.permissionmanager.excluded_words_from_default_permission_prefix', []);
                 $namespaceParts = $namespaceParts->diff($excludedWords);
-                $className = collect(explode('_', snake_case($className)))->diff($excludedWords)->implode('.');
+                $className = collect(explode('_', Str::snake($className)))->diff($excludedWords)->implode('.');
 
                 // Builds the prefix
                 $prefix = implode('.', array_merge($namespaceParts->toArray(), [$className]));
@@ -241,7 +242,7 @@ trait Permissions
         $permissions = $this->getPermissions();
 
         // Gets the current user
-        $user = Auth::user();
+        $user = backpack_user();
         if (empty($user)) {
             return;
         }
@@ -249,7 +250,7 @@ trait Permissions
         // Denies access for each permission that the user has not
         $permissions->each(function ($permission, $key) use ($user) {
             try {
-                if (!$user->hasPermissionTo($permission)) {
+                if (!$user->can($permission)) {
                     $this->denyAccess($this->extractPermissionKey($permission));
                 }
             } catch (PermissionDoesNotExist $e) {
@@ -267,6 +268,6 @@ trait Permissions
      */
     protected function extractPermissionKey($permission)
     {
-        return str_after($permission, '::');
+        return Str::after($permission, '::');
     }
 }

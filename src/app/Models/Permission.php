@@ -3,6 +3,7 @@
 namespace Backpack\PermissionManager\app\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission as OriginalPermission;
 
 class Permission extends OriginalPermission
@@ -34,6 +35,6 @@ class Permission extends OriginalPermission
      */
     public function item()
     {
-        return str_after($this->name, '::');
+        return Str::after($this->name, '::');
     }
 }
