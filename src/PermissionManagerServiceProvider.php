@@ -5,7 +5,7 @@ namespace Backpack\PermissionManager;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\PermissionServiceProvider;
-use app\Console\PermissionsCommand;
+use Backpack\CRUD\Console\PermissionsCommand;
 
 class PermissionManagerServiceProvider extends ServiceProvider
 {
