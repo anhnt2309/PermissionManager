@@ -1,6 +1,6 @@
 <?php
 
-namespace Backpack\CRUD\Console;
+namespace Backpack\PermissionManager\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Route;
