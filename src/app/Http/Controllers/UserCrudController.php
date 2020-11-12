@@ -75,7 +75,7 @@ class UserCrudController extends CrudController
                 'type' => 'select2',
                 'label' => trans('backpack::permissionmanager.extra_permissions'),
             ],
-            config('permission.models.permission')::all()->pluck('name', 'id')->toArray(),
+            config('permission.models.permission')::all()->pluck('display_name', 'id')->toArray(),
             function ($value) {
                 // if the filter is active
                 $this->crud->addClause('whereHas', 'permissions', function ($query) use ($value) {

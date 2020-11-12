@@ -16,6 +16,11 @@ class Permission extends OriginalPermission
     {
         return ucfirst($this->item());
     }
+
+    public function getDisplayNameAttribute($value)
+    {
+        return ucfirst($this->prefix()) . " - " . ucfirst($this->item());
+    }
     /**
      * Gets the permission prefix (eg. admin.page)
      *
