@@ -45,9 +45,9 @@
     })->flatten(1);
     // Groups permissions by prefix
     $permissionsByPrefix = $fieldPermission['model']::all()
-        ->sortBy(function($permission) {
-            return $permission->prefix() ?: PHP_INT_MAX; // Use PHP_INT_MAX as a little trick for sorting permissions without prefix at the end
-        })
+        // ->sortBy(function($permission) {
+        //     return $permission->prefix() ?: PHP_INT_MAX; // Use PHP_INT_MAX as a little trick for sorting permissions without prefix at the end
+        // })
         ->groupBy(function($permission) {
             return $permission->prefix();
         });
