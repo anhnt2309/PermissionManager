@@ -31,6 +31,7 @@ class Permission extends OriginalPermission
 
         $prefix = str_replace('admin.', "", $prefix);
 
+        $prefix = str_replace('.', " ", $prefix);
         return $prefix;
     }
 
