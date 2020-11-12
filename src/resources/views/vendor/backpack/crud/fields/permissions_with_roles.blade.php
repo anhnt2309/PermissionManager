@@ -89,7 +89,7 @@
                 <div class="col-sm-{{ is_int($roleColumns) ? intval(12 / $roleColumns) : '12' }}">
             @endif
                 <div class="checkbox {{ $roleColumns === true ? 'inline' : '' }}">
-                    <label>
+                    <label class="font-weight-normal">
                         <input
                             type="checkbox"
                             data-id = "{{ $role->id }}"
@@ -134,12 +134,12 @@
         </div>
         <div class="col-sm-2">
             <div class="pull-right">
-                <button class="btn btn-default btn-xs uncheck-all" title="Uncheck all">
-                    <i class="fa fa-square-o"></i>&nbsp; None
+                <button class="btn btn-dark btn-xs uncheck-all mb-1" title="Uncheck all">
+                    <i class="las la-minus-square"></i>&nbsp; None
                 </button>
                 &nbsp;
-                <button href="" class="btn btn-default btn-xs check-all" title="Check all">
-                    <i class="fa fa-check-square-o"></i>&nbsp; All
+                <button href="" class="btn btn-primary btn-xs check-all mb-1" title="Check all">
+                    <i class="las la-check-square"></i>&nbsp; All
                 </button>
             </div>
         </div>
@@ -165,19 +165,19 @@
                     @if ($permissionWithPrefixExists)
                         <div class="col-sm-3">
                             <label class="no-margin">
-                                <strong>{{ $prefix }}</strong>
+                                <strong>{{ ucfirst($prefix) }}</strong>
                             </label>
                         </div>
                     @endif
-                    <div class="col-sm-{{ $permissionWithPrefixExists ? 7 : 12 }}">
+                    <div class="col-sm-{{ $permissionWithPrefixExists ? 7 : 12 }} d-flex">
                         @foreach ($permissions as $permission)
                             <?php
                             $value = Arr::get($field, 'value');
                             $hasPermissionViaUser = ($value[1]->pluck('id')->contains($permission->id)) || (old($fieldPermission['name']) && in_array($permission->id, old($fieldPermission['name'])));
                             $hasPermissionViaRole = $entityRolesPermissions->contains($permission->id);
                             ?>
-                            <div class="checkbox inline no-margin">
-                                <label>
+                            <div class="checkbox inline p-2">
+                                <label class="font-weight-normal">
                                     <input
                                         type="checkbox"
                                         class="secondary_list"
@@ -200,11 +200,11 @@
                                         @endif
                                     >
                                     @if (is_callable($fieldPermission['attribute']))
-                                        {{ $fieldPermission['attribute']($permission) }}
+                                        {{ ucfirst($fieldPermission['attribute']($permission)) }}
                                     @elseif (is_string($fieldPermission['attribute']))
-                                        {{ $permission->{$fieldPermission['attribute']} }}
+                                        {{ ucfirst($permission->{$fieldPermission['attribute']}) }}
                                     @else
-                                        {{ $permission->item() }}
+                                        {{ ucfirst($permission->item()) }}
                                     @endif
                                 </label>
                             </div>
@@ -213,12 +213,12 @@
                     @if ($permissionWithPrefixExists)
                         <div class="col-sm-2">
                             <div class="pull-right">
-                                <button href="" class="btn btn-default btn-xs uncheck-row" title="Uncheck all" class="">
-                                    <i class="fa fa-square-o"></i>&nbsp; None
+                                <button href="" class="btn btn-dark btn-xs uncheck-row mb-1" title="Uncheck all" class="">
+                                    <i class="las la-minus-square"></i>&nbsp; None
                                 </button>
                                 &nbsp;
-                                <button href="" class="btn btn-default btn-xs check-row" title="Check all">
-                                    <i class="fa fa-check-square-o"></i>&nbsp; All
+                                <button href="" class="btn btn-primary btn-xs check-row mb-1" title="Check all">
+                                    <i class="las la-check-square"></i>&nbsp; All
                                 </button>
                             </div>
                         </div>

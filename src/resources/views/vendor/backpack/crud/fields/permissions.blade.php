@@ -11,12 +11,12 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="pull-right">
-                <button class="btn btn-default btn-xs uncheck-all" title="Uncheck all">
-                    <i class="fa fa-square-o"></i>&nbsp; None
+                <button class="btn btn-dark btn-xs uncheck-all mb-1" title="Uncheck all">
+                    <i class="las la-minus-square"></i>&nbsp; None
                 </button>
                 &nbsp;
-                <button href="" class="btn btn-default btn-xs check-all" title="Check all">
-                    <i class="fa fa-check-square-o"></i>&nbsp; All
+                <button href="" class="btn btn-primary btn-xs check-all mb-1" title="Check all">
+                    <i class="las la-check-square"></i>&nbsp; All
                 </button>
             </div>
         </div>
@@ -27,32 +27,32 @@
         <div class="row">
                 <div class="col-sm-3">
                     <label class="no-margin">
-                        <strong>{{ $prefix }}</strong>
+                        <strong>{{ ucfirst($prefix) }}</strong>
                     </label>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-sm-7 d-flex">
                     @foreach ($permissions as $permission)
-                        <div class="checkbox inline no-margin">
-                            <label>
+                        <div class="checkbox inline p-2">
+                            <label class="font-weight-normal">
                                 <input
                                     type="checkbox"
                                     name="{{ $field['name'] }}[]"
                                     value="{{ $permission->getKey() }}"
                                     @if( ( old( $field["name"] ) && in_array($permission->getKey(), old( $field["name"])) ) || (isset($field['value']) && in_array($permission->getKey(), $field['value']->pluck($permission->getKeyName(), $permission->getKeyName())->toArray())))
                                         checked = "checked"
-                                    @endif > {!! $permission->item() !!} &nbsp;
+                                    @endif > {!! ucfirst($permission->item()) !!} &nbsp;
                             </label>
                         </div>
                     @endforeach
                 </div>
                 <div class="col-sm-2">
                     <div class="pull-right">
-                        <button href="" class="btn btn-default btn-xs uncheck-row" title="Uncheck all" class="">
-                            <i class="fa fa-square-o"></i>&nbsp; None
+                        <button href="" class="btn btn-dark btn-xs uncheck-row mb-1" title="Uncheck all" class="">
+                            <i class="las la-minus-square"></i>&nbsp; None
                         </button>
                         &nbsp;
-                        <button href="" class="btn btn-default btn-xs check-row" title="Check all">
-                            <i class="fa fa-check-square-o"></i>&nbsp; All
+                        <button href="" class="btn btn-primary btn-xs check-row mb-1" title="Check all">
+                            <i class="las la-check-square"></i>&nbsp; All
                         </button>
                     </div>
                 </div>

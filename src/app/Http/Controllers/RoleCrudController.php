@@ -87,10 +87,10 @@ class RoleCrudController extends CrudController
         $this->crud->addColumn([
             // n-n relationship (with pivot table)
             'label' => ucfirst(trans('backpack::permissionmanager.permission_plural')),
-            'type' => 'select_multiple',
+            'type' => 'permissions',
             'name' => 'permissions', // the method that defines the relationship in your Model
             'entity' => 'permissions', // the method that defines the relationship in your Model
-            'attribute' => 'name', // foreign key attribute that is shown to user
+            'attribute' => 'item', // foreign key attribute that is shown to user
             'model' => $this->permission_model, // foreign key model
             'pivot' => true, // on create&update, do you need to add/delete pivot table entries?
         ]);

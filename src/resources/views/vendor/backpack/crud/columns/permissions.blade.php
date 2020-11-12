@@ -1,8 +1,8 @@
 {{-- relationships with pivot table (n-n) --}}
-<td>
+<span>
     <?php
     // Gets the attribute to display the permission name
-    $attribute = array_get($column, 'attribute');
+    $attribute = Arr::get($column, 'attribute');
     $permissions = $entry->{$column['entity']};
     // Groups permissions by prefix, sorted alphabetically
     $permissionsByPrefix = collect($permissions)
@@ -19,17 +19,20 @@
         @foreach ($permissionsByPrefix as $prefix => $permissions)
 
             @if (!$loop->first)
-                @if (array_get($column, 'inline'))
+                @if (Arr::get($column, 'inline'))
                     ,
                 @else
                     <br />
                 @endif
             @endif
-
-            {{ $prefix }}
-
-            <em>
-                ({{ $permissions->map(function($permission) use ($attribute) {
+            <span class="badge badge-dark">
+                <strong>
+                    {{ ucfirst($prefix) }}
+                </strong>
+            </span>
+            :
+            <?php
+            $sameTablePermission = $permissions->map(function($permission) use ($attribute) {
                     if (is_callable($attribute)) {
                         return $attribute($permission);
                     } elseif (is_string($attribute)) {
@@ -37,12 +40,19 @@
                     } else {
                         return $permission->item();
                     }
-                })->implode(', ') }})
-            </em>
+            });
+            ?>
+            @foreach ($sameTablePermission as $prefix => $tablePermission)
+            <span class="badge badge-secondary">
+                <i style="font-weight:500">
+                    {{ $tablePermission }}
+                </i>
+            </span>
+            @endforeach
 
         @endforeach
 
     @else
         -
     @endif
-</td>
+</span>

@@ -12,6 +12,10 @@ class Permission extends OriginalPermission
 
     protected $fillable = ['name', 'guard_name', 'updated_at', 'created_at'];
 
+    public function getItemAttribute($value)
+    {
+        return ucfirst($this->item());
+    }
     /**
      * Gets the permission prefix (eg. admin.page)
      *
@@ -24,6 +28,8 @@ class Permission extends OriginalPermission
         }
 
         list($prefix) = explode('::', $this->name);
+
+        $prefix = str_replace('admin.', "", $prefix);
 
         return $prefix;
     }
