@@ -11,7 +11,7 @@ use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 trait Permissions
 {
-    protected $availablePermissions = ['list', 'create', 'update', 'delete', 'show'];
+    protected $availablePermissions = ['list', 'create', 'update', 'delete'];
     protected $permissionsPrefix;
     protected $defaultPermissionPrefix;
 
