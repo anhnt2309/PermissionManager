@@ -27,6 +27,7 @@
             @endif
             <span class="badge badge-dark">
                 <strong>
+                    <i class="las la-table"></i>
                     {{ ucfirst($prefix) }}
                 </strong>
             </span>
