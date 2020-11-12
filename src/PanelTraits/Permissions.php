@@ -36,7 +36,7 @@ trait Permissions
 
         // Gives the current's CRUD permissions to the currently connected user
         if (config('backpack.permissionmanager.give_permissions_to_current_user_while_browsing', false)) {
-            $user = backpack_user();
+            $user = auth()->user();
             if (!empty($user)) {
                 $this->givePermissionsToUser($user);
             }
@@ -242,7 +242,7 @@ trait Permissions
         $permissions = $this->getPermissions();
 
         // Gets the current user
-        $user = backpack_user();
+        $user = auth()->user();
         if (empty($user)) {
             return;
         }
