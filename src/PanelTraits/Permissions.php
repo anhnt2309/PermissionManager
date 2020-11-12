@@ -2,7 +2,7 @@
 
 namespace Backpack\PermissionManager\PanelTraits;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\PermissionManager\app\Http\Controllers\BasePermissionCrudController;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -105,39 +105,39 @@ trait Permissions
      */
     public function getDefaultPermissionPrefix($cached = true)
     {
-        if (is_null($this->defaultPermissionPrefix) || !$cached) {
-            $this->defaultPermissionPrefix = '';
+        // if (is_null($this->defaultPermissionPrefix) || !$cached) {
+        $this->defaultPermissionPrefix = '';
 
-            if (!empty($this->controller)) {
+        if (!empty($this->controller)) {
 
-                // Splits the controller's namespace and extracts the class name
-                $namespaceParts = collect(explode('\\', trim(get_class($this->controller), '\\')));
-                $className = $namespaceParts->pop();
+            // Splits the controller's namespace and extracts the class name
+            $namespaceParts = collect(explode('\\', trim(get_class($this->controller), '\\')));
+            $className = $namespaceParts->pop();
 
-                $namespaceParts = $namespaceParts->map(function ($value) {
-                    return mb_strtolower($value);
-                });
+            $namespaceParts = $namespaceParts->map(function ($value) {
+                return mb_strtolower($value);
+            });
 
-                // Removes the app/vendor prefix from namespace
-                $namespaceParts = $namespaceParts->slice($namespaceParts->first() === 'app' ? 1 : 2);
+            // Removes the app/vendor prefix from namespace
+            $namespaceParts = $namespaceParts->slice($namespaceParts->first() === 'app' ? 1 : 2);
 
-                // Prepends "admin" to the prefix if present in the namespace or if it's a CRUD controller.
-                // Redundant words like "crud" or "backpack" are also removed.
-                if (is_subclass_of($this->controller, CrudController::class) || $namespaceParts->contains('admin')) {
-                    $namespaceParts = $namespaceParts->diff(['backpack', 'admin', 'crud'])->prepend('admin');
-                }
-
-                // Removes excluded words from namespace and class name
-                $excludedWords = config('backpack.permissionmanager.excluded_words_from_default_permission_prefix', []);
-                $namespaceParts = $namespaceParts->diff($excludedWords);
-                $className = collect(explode('_', Str::snake($className)))->diff($excludedWords)->implode('.');
-
-                // Builds the prefix
-                $prefix = implode('.', array_merge($namespaceParts->toArray(), [$className]));
-
-                $this->defaultPermissionPrefix = (string) $prefix;
+            // Prepends "admin" to the prefix if present in the namespace or if it's a CRUD controller.
+            // Redundant words like "crud" or "backpack" are also removed.
+            if (is_subclass_of($this->controller, BasePermissionCrudController::class) || $namespaceParts->contains('admin')) {
+                $namespaceParts = $namespaceParts->diff(['backpack', 'admin', 'crud'])->prepend('admin');
             }
+
+            // Removes excluded words from namespace and class name
+            $excludedWords = config('backpack.permissionmanager.excluded_words_from_default_permission_prefix', []);
+            $namespaceParts = $namespaceParts->diff($excludedWords);
+            $className = collect(explode('_', Str::snake($className)))->diff($excludedWords)->implode('.');
+
+            // Builds the prefix
+            $prefix = implode('.', array_merge($namespaceParts->toArray(), [$className]));
+
+            $this->defaultPermissionPrefix = (string) $prefix;
         }
+        // }
 
         return $this->defaultPermissionPrefix;
     }
