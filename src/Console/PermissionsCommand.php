@@ -43,8 +43,8 @@ class PermissionsCommand extends Command
         // Creates the permissions
             ->each(function ($routes) {
                 $route = $routes->first();
-                if (method_exists($route->getController()->crud, 'createMissingPermissions')) {
-                    $route->getController()->crud->createMissingPermissions();
+                if (method_exists($route->getController(), 'createMissingPermissions')) {
+                    $route->getController()->createMissingPermissions();
                 }
             });
 

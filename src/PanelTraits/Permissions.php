@@ -11,7 +11,7 @@ use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 trait Permissions
 {
-    protected $availablePermissions = ['list', 'create', 'update', 'delete'];
+    protected $availablePermissions = ['list', 'create', 'update', 'delete', 'show'];
     protected $permissionsPrefix;
     protected $defaultPermissionPrefix;
 
@@ -108,10 +108,10 @@ trait Permissions
         // if (is_null($this->defaultPermissionPrefix) || !$cached) {
         $this->defaultPermissionPrefix = '';
 
-        if (!empty($this->controller)) {
+        if (!empty($this)) {
 
             // Splits the controller's namespace and extracts the class name
-            $namespaceParts = collect(explode('\\', trim(get_class($this->controller), '\\')));
+            $namespaceParts = collect(explode('\\', trim(get_class($this), '\\')));
             $className = $namespaceParts->pop();
 
             $namespaceParts = $namespaceParts->map(function ($value) {
@@ -123,7 +123,7 @@ trait Permissions
 
             // Prepends "admin" to the prefix if present in the namespace or if it's a CRUD controller.
             // Redundant words like "crud" or "backpack" are also removed.
-            if (is_subclass_of($this->controller, BasePermissionCrudController::class) || $namespaceParts->contains('admin')) {
+            if (is_subclass_of($this, BasePermissionCrudController::class) || $namespaceParts->contains('admin')) {
                 $namespaceParts = $namespaceParts->diff(['backpack', 'admin', 'crud'])->prepend('admin');
             }
 
@@ -150,12 +150,23 @@ trait Permissions
     public function getPermissions()
     {
         $prefix = $this->getPermissionPrefix();
-
         $permissions = collect($this->availablePermissions)->map(function ($item, $key) use ($prefix) {
             return $this->getPrefixedPermission($item);
         });
 
         return $permissions;
+    }
+
+    /**
+     * Add Additional permissions.
+     *
+     */
+    public function addAdditionalPermissions($additionalPermissions)
+    {
+        if (!count($additionalPermissions)) {
+            return;
+        }
+        $this->availablePermissions = array_unique(array_merge($this->availablePermissions, $additionalPermissions), SORT_REGULAR);
     }
 
     /**
@@ -251,11 +262,11 @@ trait Permissions
         $permissions->each(function ($permission, $key) use ($user) {
             try {
                 if (!$user->can($permission)) {
-                    $this->denyAccess($this->extractPermissionKey($permission));
+                    $this->crud->denyAccess($this->extractPermissionKey($permission));
                 }
             } catch (PermissionDoesNotExist $e) {
                 // If permission does not exists : we deny access for security reasons
-                $this->denyAccess($this->extractPermissionKey($permission));
+                $this->crud->denyAccess($this->extractPermissionKey($permission));
             }
         });
     }
