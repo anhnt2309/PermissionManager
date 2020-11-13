@@ -27,7 +27,9 @@
         <div class="row">
                 <div class="col-sm-3">
                     <label class="no-margin">
-                        <strong>{{ ucfirst($prefix) }}</strong>
+                        <strong>
+                            <i class="las la-table"></i>{{ ucfirst($prefix) }}
+                        </strong>
                     </label>
                 </div>
                 <div class="col-sm-7 permission-list">
