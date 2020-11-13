@@ -30,7 +30,7 @@
                         <strong>{{ ucfirst($prefix) }}</strong>
                     </label>
                 </div>
-                <div class="col-sm-7 d-flex">
+                <div class="col-sm-7 permission-list">
                     @foreach ($permissions as $permission)
                         <div class="checkbox inline p-2">
                             <label class="font-weight-normal">

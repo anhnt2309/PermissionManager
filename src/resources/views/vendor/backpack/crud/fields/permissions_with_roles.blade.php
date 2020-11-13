@@ -169,7 +169,7 @@
                             </label>
                         </div>
                     @endif
-                    <div class="col-sm-{{ $permissionWithPrefixExists ? 7 : 12 }} d-flex">
+                    <div class="col-sm-{{ $permissionWithPrefixExists ? 7 : 12 }} permission-list">
                         @foreach ($permissions as $permission)
                             <?php
                             $value = Arr::get($field, 'value');
