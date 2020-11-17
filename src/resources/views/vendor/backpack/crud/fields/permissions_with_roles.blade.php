@@ -25,9 +25,11 @@
     // Gets the permissions granted by the entity roles (update form only)
     $entityRolesPermissions = collect();
     // Gets the entity with roles and permissions
-    $entity = ($crud->getModel())->with($fieldRole['entity'])
-        ->with($fieldRole['entity'].'.'.$fieldRole['entity_secondary'])
-        ->find($id);
+    if (isset($id)) {
+        $entity = ($crud->getModel())->with($fieldRole['entity'])
+            ->with($fieldRole['entity'].'.'.$fieldRole['entity_secondary'])
+            ->find($id);
+    }
     // Gets the permissions of each role related to the entity
     $oldRoles = old($fieldRole['name']);
     if ($oldRoles) {
@@ -37,7 +39,12 @@
         });
     } else {
         // ...from current item
-        $selectedRoles = $entity->{$fieldRole['entity']};
+        if (isset($id)) {
+            $selectedRoles = $entity->{$fieldRole['entity']};
+        }else{
+            $selectedRoles = collect();
+        }
+
     }
     // Converts to a flat list
     $entityRolesPermissions = $selectedRoles->map(function($role) use ($fieldPermission) {
@@ -53,6 +60,8 @@
         });
     // Checks if there is at least one permission with a prefix
     $permissionWithPrefixExists = $permissionsByPrefix->keys()->filter()->isNotEmpty();
+
+    $allowedRole = $fieldRole['model']::where("id",">=",backpack_user()->roles[0][backpack_user()->roles[0]->getKeyName()])->get();
     ?>
     <script>
         var  {{ $field['field_unique_name'] }} = {!! $rolesPermissions->toJson() !!};
@@ -84,14 +93,14 @@
             <div class="col-sm-12">
         @endif
 
-        @foreach ($fieldRole['model']::all() as $role)
+        @foreach ($allowedRole as $role)
             @if (is_int($roleColumns))
                 <div class="col-sm-{{ is_int($roleColumns) ? intval(12 / $roleColumns) : '12' }}">
             @endif
                 <div class="checkbox {{ $roleColumns === true ? 'inline' : '' }}">
                     <label class="font-weight-normal">
                         <input
-                            type="checkbox"
+                            type="radio"
                             data-id = "{{ $role->id }}"
                             class="primary_list"
                             @foreach ($fieldRole as $attribute => $value)
@@ -160,13 +169,14 @@
 
         <div class="col-sm-12">
             @foreach ($permissionsByPrefix as $prefix => $permissions)
+                @if((count(backpack_user()->roles) && backpack_user()->roles[0][backpack_user()->roles[0]->getKeyName()] == 0) || backpack_user()->can($permissions[0]->fullPrefix(). "::admin"))
                 <hr/>
                 <div class="row">
                     @if ($permissionWithPrefixExists)
                         <div class="col-sm-3">
                             <label class="no-margin">
                                 <strong>
-                                    <i class="las la-table"></i>{{ ucfirst($prefix) }}
+                                <i class="las la-table"></i>{{ ucfirst($prefix) }}
                                 </strong>
                             </label>
                         </div>
@@ -175,8 +185,8 @@
                         @foreach ($permissions as $permission)
                             <?php
                             $value = Arr::get($field, 'value');
-                            $hasPermissionViaUser = ($value[1]->pluck('id')->contains($permission->id)) || (old($fieldPermission['name']) && in_array($permission->id, old($fieldPermission['name'])));
-                            $hasPermissionViaRole = $entityRolesPermissions->contains($permission->id);
+                            $hasPermissionViaUser = !isset($id) ? false : ($value[1]->pluck('id')->contains($permission->id)) || (old($fieldPermission['name']) && in_array($permission->id, old($fieldPermission['name'])));
+                            $hasPermissionViaRole = !isset($id) ? false : $entityRolesPermissions->contains($permission->id);
                             ?>
                             <div class="checkbox inline p-2">
                                 <label class="font-weight-normal">
@@ -226,6 +236,7 @@
                         </div>
                     @endif
                 </div>
+                @endif
             @endforeach
         </div>
 
@@ -314,7 +325,8 @@
                             // Adds hidden field with this value
                             var nameInput = $field.find('.hidden_fields_primary').data('name');
                             var inputToAdd = $('<input type="hidden" class="primary_hidden" name="'+nameInput+'[]" value="'+roleId+'">');
-                            $field.find('.hidden_fields_primary').append(inputToAdd);
+                            $field.find('.hidden_fields_primary').html(inputToAdd);
+                            $field.find('input.secondary_list').prop("checked", false).prop("disabled", false);
                             if ($.isArray(rolesPermissions[roleId])) {
                                 $.each(rolesPermissions[roleId], function (key, permissionId) {
                                     // Checks and disable secondaries checkboxes

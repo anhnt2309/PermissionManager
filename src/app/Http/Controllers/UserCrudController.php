@@ -17,6 +17,12 @@ class UserCrudController extends CrudController
     function setup()
     {
         $this->crud->setModel(config('backpack.permissionmanager.models.user'));
+        if (count(backpack_user()->roles) >= 1) {
+            $this->crud->addClause('whereHas', "roles", function ($query) {
+                return $query->where('id', ">=", backpack_user()->roles[0][backpack_user()->roles[0]->getKeyName()]);
+            });
+        }
+        $this->crud->denyAccess('delete');
         $this->crud->setEntityNameStrings(trans('backpack::permissionmanager.user'), trans('backpack::permissionmanager.users'));
         $this->crud->setRoute(backpack_url('user'));
     }
@@ -29,11 +35,11 @@ class UserCrudController extends CrudController
                 'label' => trans('backpack::permissionmanager.name'),
                 'type' => 'text',
             ],
-            // [
-            //     'name' => 'email',
-            //     'label' => trans('backpack::permissionmanager.email'),
-            //     'type' => 'email',
-            // ],
+            [
+                'name' => 'username',
+                'label' => trans('backpack::permissionmanager.username'),
+                'type' => 'text',
+            ],
             [ // n-n relationship (with pivot table)
                 'label' => trans('backpack::permissionmanager.roles'), // Table column heading
                 'type' => 'select_multiple',
@@ -153,11 +159,11 @@ class UserCrudController extends CrudController
                 'label' => trans('backpack::permissionmanager.name'),
                 'type' => 'text',
             ],
-            // [
-            //     'name' => 'email',
-            //     'label' => trans('backpack::permissionmanager.email'),
-            //     'type' => 'email',
-            // ],
+            [
+                'name' => 'username',
+                'label' => trans('backpack::permissionmanager.username'),
+                'type' => 'text',
+            ],
             [
                 'name' => 'password',
                 'label' => trans('backpack::permissionmanager.password'),

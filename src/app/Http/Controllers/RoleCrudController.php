@@ -22,6 +22,9 @@ class RoleCrudController extends CrudController
         $this->permission_model = $permission_model = config('backpack.permissionmanager.models.permission');
 
         $this->crud->setModel($role_model);
+        if (count(backpack_user()->roles) >= 1) {
+            $this->crud->addClause('where', 'id', ">=", backpack_user()->roles[0][backpack_user()->roles[0]->getKeyName()]);
+        }
         $this->crud->setEntityNameStrings(trans('backpack::permissionmanager.role'), trans('backpack::permissionmanager.roles'));
         $this->crud->setRoute(backpack_url('role'));
 
@@ -42,6 +45,12 @@ class RoleCrudController extends CrudController
         /**
          * Show a column for the name of the role.
          */
+        $this->crud->addColumn([
+            'name' => 'level',
+            'label' => trans('backpack::permissionmanager.level'),
+            'type' => 'text',
+        ]);
+
         $this->crud->addColumn([
             'name' => 'name',
             'label' => trans('backpack::permissionmanager.name'),
