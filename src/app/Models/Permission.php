@@ -22,7 +22,7 @@ class Permission extends OriginalPermission
         return ucfirst($this->prefix()) . " - " . ucfirst($this->item());
     }
     /**
-     * Gets the permission prefix (eg. admin.page)
+     * Gets the permission prefix (eg. page)
      *
      * @return null|string
      */
@@ -49,4 +49,20 @@ class Permission extends OriginalPermission
     {
         return Str::after($this->name, '::');
     }
+
+    /**
+     * Gets the full permission prefix (eg. admin.page)
+     *
+     * @return null|string
+     */
+    public function fullPrefix()
+    {
+        if (!str_contains($this->name, '::')) {
+            return null;
+        }
+
+        list($prefix) = explode('::', $this->name);
+        return $prefix;
+    }
+
 }
