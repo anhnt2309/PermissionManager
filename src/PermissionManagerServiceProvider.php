@@ -2,7 +2,7 @@
 
 namespace Backpack\PermissionManager;
 
-use Backpack\PermissionManager\app\Library\CrudPanel\PermissionCrudPanel;
+use Backpack\PermissionManager\app\Library\PermissionCrudPanel;
 use Backpack\PermissionManager\Console\PermissionsCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;

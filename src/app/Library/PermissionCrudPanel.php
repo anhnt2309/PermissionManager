@@ -1,6 +1,6 @@
 <?php
 
-namespace Backpack\PermissionManager\app\Library\CrudPanel;
+namespace Backpack\PermissionManager\app\Library;
 
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\PermissionManager\app\Models\Role;
